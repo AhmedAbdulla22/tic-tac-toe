@@ -17,12 +17,12 @@ function Board() {
             for (let col = 0; col < 3; col++) {
                 boardUI += ` | ${board[row][col].getChoice()}`;
             }            
-            boardUI += "    |\n";
+            boardUI += " |\n";
         }
         return boardUI;
     }
 
-    return {board, printTheBoard};S
+    return {board, TheBoardInterface};S
 }
 
 // cell
