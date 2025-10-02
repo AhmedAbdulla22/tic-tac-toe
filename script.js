@@ -22,44 +22,58 @@ function Board() {
         return boardUI;
     }
 
-    return {board, TheBoardInterface};S
+    return {board, TheBoardInterface};
 }
 
 // cell
 function Cell() {
-    //0 for no one
-    //1 for player 1
-    //2 for player 2
-    let player = 0;
     //0 for empty
     //1 for X
     //2 for Y
-    let choice = 0;
-    function getChoice() {
-        return choice === 0 ? "*":
-          choice === 1 ? "X":"O";
+    let value = 0;
+    function getValue() {
+        return value === 0 ? "*":
+          value === 1 ? "X":"O";
     }
 
-    function getPlayer() {
-        return player === 0 ? "no one":
-          player === 1 ? "player 1":"player 2";
-    }
-
-    function setChoice(newChoice) {
-        choice = newChoice;
-    }
-
-    function setPlayer(newPlayer) {
-        player = newPlayer;
+    function setValue(newValue) {
+        value = newValue;
     }
 
     return {
-        getChoice,
-        getPlayer,
-        setChoice,
-        setPlayer,
+        getValue,
+        setValue,
     }
 }
+
+function player() {
+    let name = "";
+    let roundsWon = 0;
+
+    function getName() {
+        return name;
+    }
+
+    function getRoundsWon() {
+        return roundsWon;
+    }
+
+    function setName(newName) {
+        name = newName;
+    }
+
+    function setRoundsWon(rounds) {
+        roundsWon = rounds;
+    }
+
+    return {
+        getName,
+        getRoundsWon,
+        setName,
+        setRoundsWon,
+    }
+}
+
 
 function gameController() {
     let board = Board();
