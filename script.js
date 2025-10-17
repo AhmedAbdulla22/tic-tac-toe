@@ -28,7 +28,7 @@ function gameBoard() {
 
     function checkResult() {
         let notMatch = false;
-
+        
         //Horiziontal Check
         for (let row = 0; row < 3; row++) {
             //get first col value in the row 
@@ -151,6 +151,7 @@ function Cell() {
 function Player() {
     let name = "";
     let roundsWon = 0;
+    let roundsTie = 0;
 
     function getName() {
         return name;
@@ -179,27 +180,44 @@ function Player() {
 
 function gameController() {
     let board = gameBoard();
+    let round = 0;
     
     let player1 = Player();
     let player2 = Player();
 
     player1.setName("Player1");
     player2.setName("player2");
+
+    function play() {
+        let roundOver = false;
+        let playerTurn = 0;
+
+        while(!roundOver) {
+            console.log(`${playerTurn === 0 ? player1.getName():player2.getName()} Turn:`);
+            const row = prompt(`choose row 1-3:`);
+            const column = prompt(`choose column 1-3:`);
+            //drop value
+            console.log(playerTurn === 0)
+            board.setCell(row - 1,column - 1,playerTurn === 0 ? 1 : 2);
+            // board.checkResult();
+            console.log(board.TheBoardInterface())
+            playerTurn = playerTurn === 0 ? 1:0;
+            console.log(playerTurn)
+        }
+        //check who is turn
+        //wait for him to choose his cell
+        //drop value in that cell
+        //update board
+        // check who won
+        //if game over
+        // update player stats and game stats
+        // if not game over repeat to first step
+    }
     
-    return {board , player1 , player2};
+
+    return {board , player1 , player2, play};
 }
 
 
 const game = gameController();
-
-game.board.setCell(0,0,1);
-game.board.setCell(0,1,2);
-game.board.setCell(0,2,2);
-game.board.setCell(1,0,1);
-game.board.setCell(1,1,1);
-game.board.setCell(1,2,1);
-game.board.setCell(2,0,2);
-game.board.setCell(2,1,1);
-game.board.setCell(2,2,1);
-console.log(game.board.TheBoardInterface());
-game.board.checkResult();
+game.play()
