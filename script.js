@@ -27,28 +27,23 @@ function gameBoard() {
     }
 
     function checkResult() {
-        let notMatch = false;
-        
         //Horiziontal Check
         for (let row = 0; row < 3; row++) {
             //get first col value in the row 
             let Symbol = board[row][0]?.getValue();
+            let match = true;
 
             //compare first col value we got (Symbol)
             for (let col = 0; col < 3; col++) {
                 if (board[row][col]?.getValue() !== Symbol || board[row][col]?.getValue() === "*") {
-                    notMatch = true;
+                    match = false;
                     break;
                 } 
             }         
 
             //if match then someone won
-            if (!notMatch) {
-                console.log(`${Symbol} won the game`);
-                return;
-            } else {
-                //reset the flag
-                notMatch = false;
+            if (match) {
+                return true; //true = Won
             }
         }
 
@@ -56,22 +51,19 @@ function gameBoard() {
         for (let col = 0; col < 3; col++) {
             //get first row value in the col
             let Symbol = board[0][col]?.getValue();
+            let match = true;
 
             //compare first row value we got (Symbol)
             for (let row = 0; row < 3; row++) {
                 if (board[row][col]?.getValue() !== Symbol || board[row][col]?.getValue() === "*") {
-                    notMatch = true;
+                    match = false;
                     break;
                 } 
             }         
 
             //if match then someone won
-            if (!notMatch) {
-                console.log(`${Symbol} won the game`);
-                return;
-            } else {
-                //reset the flag
-                notMatch = false;
+            if (match) {
+                return true;//true: Won
             }
         }
 
@@ -79,44 +71,40 @@ function gameBoard() {
         if (notMatch) {
             //get first value from left to right
             let Symbol = board[0][0]?.getValue();
+            let match = true;
 
             for (let i = 0; i < 3; i++) {
                 if (board[i][i]?.getValue() !== Symbol || board[i][i]?.getValue() === "*") {
-                    notMatch = true;
+                    match = false;
                     break;
                 } 
             }         
 
             //if match then someone won
-            if (!notMatch) {
-                console.log(`${Symbol} won the game`);
-                return;
-            } else {
-                //reset the flag
-                notMatch = false;
+            if (match) {
+                return true;//true: Won
             }
         } else {
             //Diagonal RTL Check
             //get first value from left to right
             let Symbol = board[0][2]?.getValue();
+            let match = true;
 
             for (let i = 0; i < 3; i++) {
                 //2-i for RTL
                 if (board[i][2 - i]?.getValue() !== Symbol || board[i][2 - i]?.getValue() === "*") {
-                    notMatch = true;
+                    match = false;
                     break;
                 } 
             }         
 
             //if match then someone won
-            if (!notMatch) {
-                console.log(`${Symbol} won the game`);
-                return;
-            } else {
-                //reset the flag
-                notMatch = false;
+            if (match) {
+                return true;//true: Won
             }
         }
+
+        return false; //Not Won
 
     }
 
@@ -193,16 +181,13 @@ function gameController() {
         let playerTurn = 0;
 
         while(!roundOver) {
-            console.log(`${playerTurn === 0 ? player1.getName():player2.getName()} Turn:`);
             const row = prompt(`choose row 1-3:`);
             const column = prompt(`choose column 1-3:`);
             //drop value
-            console.log(playerTurn === 0)
             board.setCell(row - 1,column - 1,playerTurn === 0 ? 1 : 2);
-            // board.checkResult();
+            board.checkResult();
             console.log(board.TheBoardInterface())
             playerTurn = playerTurn === 0 ? 1:0;
-            console.log(playerTurn)
         }
         //check who is turn
         //wait for him to choose his cell
