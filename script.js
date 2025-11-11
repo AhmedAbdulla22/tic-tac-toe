@@ -144,20 +144,63 @@ function createPlayer(name,mark) {
 
 
 function gameController() {
-    let board = gameBoard();
+    let board;
     let gameOver;
     let player = [];
     let currentPlayerIndex;
+    console.log(board);
 
     function play() {
+        board = ["","","","","","","","",""];
+        gameOver = false;
+        player = [createPlayer("John","X"),createPlayer("Pork","O")];
+        currentPlayerIndex = 0;
 
-        const row = prompt(`choose row 1-3:`);
-        const column = prompt(`choose column 1-3:`);
-        //drop value
-        board.setCell(row - 1,column - 1,currentPlayerIndex === 0 ? 1 : 2);
-        board.checkResult();
-        console.log(board.TheBoardInterface())
-        currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
+        while(!gameOver) {
+            let boardUI = "";
+            for (let i = 0; i < 9; i++) {
+                boardUI += ` | ${board[i] ? board[i] : i + 1}`;    
+                if (i === 2 || i === 5 || i === 8) {
+                    boardUI += " |\n-----------\n";
+                }
+            }
+
+            const cell = prompt(`choose cell 1-9:\n${boardUI}`);
+
+            if(cell < 1 || cell > 9) {
+                alert("Wrong Choice!");
+                continue;
+            }
+            
+            //drop value
+            board[cell - 1] = player[currentPlayerIndex].mark;
+
+            //check result
+            if (
+                //Horizontal 
+                board[0] === board[1] && board[1] === board[2] || 
+                board[3] === board[4] && board[4] === board[5] ||
+                board[6] === board[7] && board[7] === board[8] ||
+                //Vertical
+                board[0] === board[3] && board[3] === board[6] || 
+                board[1] === board[4] && board[4] === board[7] ||
+                board[2] === board[5] && board[5] === board[8] ||
+                //Diag
+                board[0] === board[4] && board[4] === board[8] ||
+                board[2] === board[4] && board[4] === board[6]
+            ) {
+                gameOver = true;
+            }
+
+            if (gameOver) {
+                  console.log(`${player[currentPlayerIndex].name} Won the Game!`);
+            }
+
+            currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
+        }
+
+
+
         
         //check who is turn
         //wait for him to choose his cell
@@ -170,9 +213,9 @@ function gameController() {
     }
     
 
-    return {board , player1 , player2, play};
+    return {board , play};
 }
 
 
 const game = gameController();
-game.play()
+game.play();
