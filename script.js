@@ -136,45 +136,16 @@ function Cell() {
     }
 }
 
-function Player() {
-    let name = "";
-    let roundsWon = 0;
-    let roundsTie = 0;
-
-    function getName() {
-        return name;
-    }
-
-    function getRoundsWon() {
-        return roundsWon;
-    }
-
-    function setName(newName) {
-        name = newName;
-    }
-
-    function setRoundsWon(rounds) {
-        roundsWon = rounds;
-    }
-
+function createPlayer(name,mark) {
     return {
-        getName,
-        getRoundsWon,
-        setName,
-        setRoundsWon,
+        name,
+        mark
     }
 }
 
 
 function gameController() {
     let board = gameBoard();
-    let round = 0;
-    
-    let player1 = Player();
-    let player2 = Player();
-
-    player1.setName("Player1");
-    player2.setName("player2");
 
     function play() {
         let roundOver = false;
