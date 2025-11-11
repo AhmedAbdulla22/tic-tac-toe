@@ -7,8 +7,7 @@ function gameBoard() {
 
     
     function getBoard() {
-        return Array.from({length: 3},() => 
-        Array.from({length: 3   },() => Cell()));
+        return ["","","","","","","","",""];
     }
 
     function resetBoard() {
@@ -17,11 +16,11 @@ function gameBoard() {
 
     function TheBoardInterface() {
         let boardUI = "";
-        for (let row = 0; row < 3; row++) {
-            for (let col = 0; col < 3; col++) {
-                boardUI += ` | ${board[row][col].getValue()}`;
-            }            
-            boardUI += " |\n";
+        for (let i = 0; i < 9; i++) {
+            boardUI += ` | ${board[i].getValue()}`;    
+            if (i === 2 || i === 4 || i === 8) {
+                boardUI += " |\n";
+            }
         }
         return boardUI;
     }
@@ -108,8 +107,8 @@ function gameBoard() {
 
     }
 
-    function setCell(row,col,value) {
-        board[row][col].setValue(value);
+    function setCell(index,value) {
+        board[index].setValue(value);
     }
 
     return { TheBoardInterface,resetBoard , setCell,checkResult};
@@ -146,20 +145,20 @@ function createPlayer(name,mark) {
 
 function gameController() {
     let board = gameBoard();
+    let gameOver;
+    let player = [];
+    let currentPlayerIndex;
 
     function play() {
-        let roundOver = false;
-        let playerTurn = 0;
 
-        while(!roundOver) {
-            const row = prompt(`choose row 1-3:`);
-            const column = prompt(`choose column 1-3:`);
-            //drop value
-            board.setCell(row - 1,column - 1,playerTurn === 0 ? 1 : 2);
-            board.checkResult();
-            console.log(board.TheBoardInterface())
-            playerTurn = playerTurn === 0 ? 1:0;
-        }
+        const row = prompt(`choose row 1-3:`);
+        const column = prompt(`choose column 1-3:`);
+        //drop value
+        board.setCell(row - 1,column - 1,currentPlayerIndex === 0 ? 1 : 2);
+        board.checkResult();
+        console.log(board.TheBoardInterface())
+        currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
+        
         //check who is turn
         //wait for him to choose his cell
         //drop value in that cell
