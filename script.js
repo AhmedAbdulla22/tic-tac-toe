@@ -83,33 +83,41 @@ function gameController() {
 
     function play() {
         board = gameBoard();
-        gameOver = false;
         player = [createPlayer("John","X"),createPlayer("Pork","O")];
-        currentPlayerIndex = 0;
-
-        while(!gameOver) {
-            const cell = prompt(`choose cell 1-9:\n${board.TheBoardInterface()}`);
-
-            //drop value
-            if (!board.setMark(cell,player[currentPlayerIndex].mark)) {
-                continue;
-            }
+        rounds = prompt("How Many Rounds to Play? 1-9:");
+        // TODO: Add Rounds
+        
+        for (let round = 0; round < rounds; round++) {
+            gameOver = false;
+            currentPlayerIndex = 0;
+            board.reset();
             
-            
-
-            //check result
-            // TODO: add check here
-            let currentBoard = board.getBoard();  
-            if (checkWin(currentBoard)) {
-                console.log(`${player[currentPlayerIndex].name} Won the Game!`);
-                gameOver = true;
-            } else if (checkDraw(currentBoard)) {
-                console.log(`the Game ended With Draw!`);
-                gameOver = true;
-            } else {
-                currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
+            while(!gameOver) {
+                const cell = prompt(`choose cell 1-9:\n${board.TheBoardInterface()}`);
+    
+                //drop value
+                if (!board.setMark(cell,player[currentPlayerIndex].mark)) {
+                    continue;
+                }
+                
+                
+    
+                //check result
+                let currentBoard = board.getBoard();  
+                if (checkWin(currentBoard)) {
+                    //Won
+                    console.log(`${player[currentPlayerIndex].name} Won the Game!`);
+                    gameOver = true;
+                } else if (checkDraw(currentBoard)) {
+                    //Draw
+                    console.log(`the Game ended With Draw!`);
+                    gameOver = true;
+                } else {
+                    //Ongoing
+                    currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
+                }
+    
             }
-
         }
     }
     
