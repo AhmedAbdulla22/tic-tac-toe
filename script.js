@@ -22,22 +22,22 @@ function gameBoard() {
         board = newBoard();
     }
 
-    // function TheBoardInterface() {
-    //     let boardUI = "";
-    //     for (let i = 0; i < 9; i++) {
-    //         boardUI += ` | ${board[i] ? board[i] : '#'}`;    
-    //         if (i === 2 || i === 5 || i === 8) {
-    //             boardUI += " |\n-----------\n";
-    //         }
-    //     }
-    //     return boardUI;
-    // }
-
-    function setMark(index,value) {
-        return board[index].setValue(value);
+    function TheBoardInterface() {
+        let boardUI = "";
+        for (let i = 0; i < 9; i++) {
+            boardUI += ` | ${board[i].getValue() ? board[i].getValue() : '#'}`;    
+            if (i === 2 || i === 5 || i === 8) {
+                boardUI += " |\n-----------\n";
+            }
+        }
+        return boardUI;
     }
 
-    return { getBoard , reset , setMark};
+    function setMark(index,value) {
+        return board[index - 1].setValue(value);
+    }
+
+    return { getBoard , reset , setMark,TheBoardInterface};
 }
 
 // cell
@@ -88,22 +88,28 @@ function gameController() {
         currentPlayerIndex = 0;
 
         while(!gameOver) {
-            const cell = prompt(`choose cell 1-9:\n${boardUI}`);
+            const cell = prompt(`choose cell 1-9:\n${board.TheBoardInterface()}`);
 
             //drop value
-            if (!Board.setMark(cell,player[currentPlayerIndex].mark)) {
+            if (!board.setMark(cell,player[currentPlayerIndex].mark)) {
                 continue;
             }
             
+            
 
             //check result
-           
-
-            if (gameOver) {
-                  console.log(`${player[currentPlayerIndex].name} Won the Game!`);
+            // TODO: add check here
+            let currentBoard = board.getBoard();  
+            if (checkWin(currentBoard)) {
+                console.log(`${player[currentPlayerIndex].name} Won the Game!`);
+                gameOver = true;
+            } else if (checkDraw(currentBoard)) {
+                console.log(`the Game ended With Draw!`);
+                gameOver = true;
+            } else {
+                currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
             }
 
-            currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
         }
     }
     
@@ -115,7 +121,7 @@ function gameController() {
                 let skip = false; // to skip row if there is empty cell
 
                 for (let i = 0; i < 3; i++) {
-                    if (board[index + i] === "") {
+                    if (board[index + i].getValue() === "") {
                         skip = true;
                         break;
                     }                 
@@ -126,7 +132,7 @@ function gameController() {
                 } 
 
                 //check for win
-                if (board[index] === board[index + 1] && board[index] === board[index + 2]) {
+                if (board[index].getValue() === board[index + 1].getValue() && board[index].getValue() === board[index + 2].getValue()) {
                     isWin = true;
                     break;
                 }
@@ -138,7 +144,7 @@ function gameController() {
                     let skip  = false; // to skip col if there is empty cell
     
                     for (let row = 0; row < 3; row++) {
-                        if (board[col + row * 3] === "") {
+                        if (board[col + row * 3].getValue() === "") {
                             skip = true;
                             break;
                         }                             
@@ -148,7 +154,7 @@ function gameController() {
                        continue; 
                     } 
     
-                    if (board[col] === board[col + 3] && board[col] === board[col + 6]) {
+                    if (board[col].getValue() === board[col + 3].getValue() && board[col].getValue() === board[col + 6].getValue()) {
                         isWin = true;
                         break;
                     }
@@ -158,10 +164,9 @@ function gameController() {
 
             if (!isWin) {
                 //Diag 
-                alert("i'm here")
-                if (board[0] !== "" && board[0] === board[4] && board[0] === board[8]) {
+                if (board[0].getValue() !== "" && board[0].getValue() === board[4].getValue() && board[0].getValue() === board[8].getValue()) {
                     isWin = true;
-                } else if (board[2] !== "" && board[2] === board[4] && board[2] === board[6]) {
+                } else if (board[2].getValue() !== "" && board[2].getValue() === board[4].getValue() && board[2].getValue() === board[6].getValue()) {
                     isWin = true;
                 }
             }
@@ -172,7 +177,7 @@ function gameController() {
     function checkDraw(board) {
         let draw = true;
         for (let i = 0; i < 9; i++) {
-            if (board[i] === "") {
+            if (board[i].getValue() === "") {
                 draw = false;
                 break;
             }
