@@ -146,7 +146,7 @@ function createPlayer(name,mark) {
 }
 
 
-const gameController = (() {
+const gameController = (() => {
     let gameOver;
     let player = [];
     let currentPlayerIndex;
