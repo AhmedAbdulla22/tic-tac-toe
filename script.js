@@ -1,8 +1,7 @@
 console.log("Welcome to tic-tac-toe!");
 // this game is tic-tac-toe game
-
 // game board
-function gameBoard() {
+const gameBoard = (() => {
     let board = newBoard();
 
     function newBoard() {
@@ -52,7 +51,7 @@ function gameBoard() {
                 }
 
                 if(skip) {
-                   continue; 
+                continue; 
                 } 
 
                 //check for win
@@ -75,7 +74,7 @@ function gameBoard() {
                     }
     
                     if(skip) {
-                       continue; 
+                    continue; 
                     } 
     
                     if (board[col].getValue() === board[col + 3].getValue() && board[col].getValue() === board[col + 6].getValue()) {
@@ -111,7 +110,7 @@ function gameBoard() {
     }
 
     return { getBoard , reset , setMark,TheBoardInterface , checkDraw , checkWin};
-}
+})();
 
 // cell
 function Cell() {
@@ -147,37 +146,35 @@ function createPlayer(name,mark) {
 }
 
 
-function gameController() {
-    let board;
+const gameController = (() {
     let gameOver;
     let player = [];
     let currentPlayerIndex;
     let rounds;
 
     function play() {
-        board = gameBoard();
         player = [createPlayer("John","X"),createPlayer("Pork","O")];
         rounds = prompt("How Many Rounds to Play? 1-9:");
         
         for (let round = 0; round < rounds; round++) {
             gameOver = false;
             currentPlayerIndex = 0;
-            board.reset();
+            gameBoard.reset();
             
             while(!gameOver) {
-                const cell = prompt(`choose cell 1-9:\n${board.TheBoardInterface()}`);
+                const cell = prompt(`choose cell 1-9:\n${gameBoard.TheBoardInterface()}`);
     
                 //drop value
-                if (!board.setMark(cell,player[currentPlayerIndex].mark)) {
+                if (!gameBoard.setMark(cell,player[currentPlayerIndex].mark)) {
                     continue;
                 }
                 
                 //check result
-                if (board.checkWin()) {
+                if (gameBoard.checkWin()) {
                     //Won
                     console.log(`${player[currentPlayerIndex].name} Won the Game!`);
                     gameOver = true;
-                } else if (board.checkDraw()) {
+                } else if (gameBoard.checkDraw()) {
                     //Draw
                     console.log(`the Game ended With Draw!`);
                     gameOver = true;
@@ -190,8 +187,8 @@ function gameController() {
         }
     }
 
-    return {board , play};
-}
+    return {play};
+})();
 
 
 const game = gameController();
