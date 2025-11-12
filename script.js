@@ -1,5 +1,38 @@
 console.log("Welcome to tic-tac-toe!");
 // this game is tic-tac-toe game
+// cell
+function Cell() {
+    let value = "";
+    function getValue() {
+        return value;
+    }
+
+    function setValue(newValue) {
+        if(isEmpty()) {
+            value = newValue;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function isEmpty() {
+        return value === "";
+    }
+
+    return {
+        getValue,
+        setValue,
+    }
+}
+
+function createPlayer(name,mark) {
+    return {
+        name,
+        mark
+    }
+}
+
 // game board
 const gameBoard = (() => {
     let board = newBoard();
@@ -112,84 +145,61 @@ const gameBoard = (() => {
     return { getBoard , reset , setMark,TheBoardInterface , checkDraw , checkWin};
 })();
 
-// cell
-function Cell() {
-    let value = "";
-    function getValue() {
-        return value;
-    }
-
-    function setValue(newValue) {
-        if(isEmpty()) {
-            value = newValue;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    function isEmpty() {
-        return value === "";
-    }
-
-    return {
-        getValue,
-        setValue,
-    }
-}
-
-function createPlayer(name,mark) {
-    return {
-        name,
-        mark
-    }
-}
-
-
 const gameController = (() => {
     let gameOver;
     let player = [];
     let currentPlayerIndex;
-    let rounds;
 
     function play() {
         player = [createPlayer("John","X"),createPlayer("Pork","O")];
         rounds = prompt("How Many Rounds to Play? 1-9:");
         
-        for (let round = 0; round < rounds; round++) {
-            gameOver = false;
-            currentPlayerIndex = 0;
-            gameBoard.reset();
-            
-            while(!gameOver) {
-                const cell = prompt(`choose cell 1-9:\n${gameBoard.TheBoardInterface()}`);
-    
-                //drop value
-                if (!gameBoard.setMark(cell,player[currentPlayerIndex].mark)) {
-                    continue;
-                }
-                
-                //check result
-                if (gameBoard.checkWin()) {
-                    //Won
-                    console.log(`${player[currentPlayerIndex].name} Won the Game!`);
-                    gameOver = true;
-                } else if (gameBoard.checkDraw()) {
-                    //Draw
-                    console.log(`the Game ended With Draw!`);
-                    gameOver = true;
-                } else {
-                    //Ongoing
-                    currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
-                }
-    
+        gameOver = false;
+        currentPlayerIndex = 0;
+        gameBoard.reset();
+        
+        while(!gameOver) {
+            const cell = prompt(`choose cell 1-9:\n${gameBoard.TheBoardInterface()}`);
+
+            //drop value
+            if (!gameBoard.setMark(cell,player[currentPlayerIndex].mark)) {
+                continue;
             }
+            
+            //check result
+            if (gameBoard.checkWin()) {
+                //Won
+                console.log(`${player[currentPlayerIndex].name} Won the Game!`);
+                gameOver = true;
+            } else if (gameBoard.checkDraw()) {
+                //Draw
+                console.log(`the Game ended With Draw!`);
+                gameOver = true;
+            } else {
+                //Ongoing
+                currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
+            }
+
         }
     }
 
     return {play};
 })();
 
+const displayController = (() => {
+    // TODO: display Controller
+    function displayGameBoard() {
+        const gameBoardContainer = document.getElementById("game-board");
+        gameBoardContainer.innerText = gameBoard.TheBoardInterface();
+    }
 
-const game = gameController();
-game.play();
+    return {
+        displayGameBoard,
+    }
+})();
+
+
+
+
+// gameController.play();
+displayController.displayGameBoard();
