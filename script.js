@@ -37,91 +37,7 @@ function gameBoard() {
         return board[index - 1].setValue(value);
     }
 
-    return { getBoard , reset , setMark,TheBoardInterface};
-}
-
-// cell
-function Cell() {
-    let value = "";
-    function getValue() {
-        return value;
-    }
-
-    function setValue(newValue) {
-        if(isEmpty()) {
-            value = newValue;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    function isEmpty() {
-        return value === "";
-    }
-
-    return {
-        getValue,
-        setValue,
-    }
-}
-
-function createPlayer(name,mark) {
-    return {
-        name,
-        mark
-    }
-}
-
-
-function gameController() {
-    let board;
-    let gameOver;
-    let player = [];
-    let currentPlayerIndex;
-    let rounds;
-
-    function play() {
-        board = gameBoard();
-        player = [createPlayer("John","X"),createPlayer("Pork","O")];
-        rounds = prompt("How Many Rounds to Play? 1-9:");
-        // TODO: Add Rounds
-        
-        for (let round = 0; round < rounds; round++) {
-            gameOver = false;
-            currentPlayerIndex = 0;
-            board.reset();
-            
-            while(!gameOver) {
-                const cell = prompt(`choose cell 1-9:\n${board.TheBoardInterface()}`);
-    
-                //drop value
-                if (!board.setMark(cell,player[currentPlayerIndex].mark)) {
-                    continue;
-                }
-                
-                
-    
-                //check result
-                let currentBoard = board.getBoard();  
-                if (checkWin(currentBoard)) {
-                    //Won
-                    console.log(`${player[currentPlayerIndex].name} Won the Game!`);
-                    gameOver = true;
-                } else if (checkDraw(currentBoard)) {
-                    //Draw
-                    console.log(`the Game ended With Draw!`);
-                    gameOver = true;
-                } else {
-                    //Ongoing
-                    currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
-                }
-    
-            }
-        }
-    }
-    
-    function checkWin(board) {
+    function checkWin() {
         let isWin = false;
         //Horizontal 
             for (let row = 0; row < 3; row++) {
@@ -182,7 +98,7 @@ function gameController() {
             return isWin;
     }
 
-    function checkDraw(board) {
+    function checkDraw() {
         let draw = true;
         for (let i = 0; i < 9; i++) {
             if (board[i].getValue() === "") {
@@ -192,6 +108,86 @@ function gameController() {
         } 
 
         return draw;
+    }
+
+    return { getBoard , reset , setMark,TheBoardInterface , checkDraw , checkWin};
+}
+
+// cell
+function Cell() {
+    let value = "";
+    function getValue() {
+        return value;
+    }
+
+    function setValue(newValue) {
+        if(isEmpty()) {
+            value = newValue;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function isEmpty() {
+        return value === "";
+    }
+
+    return {
+        getValue,
+        setValue,
+    }
+}
+
+function createPlayer(name,mark) {
+    return {
+        name,
+        mark
+    }
+}
+
+
+function gameController() {
+    let board;
+    let gameOver;
+    let player = [];
+    let currentPlayerIndex;
+    let rounds;
+
+    function play() {
+        board = gameBoard();
+        player = [createPlayer("John","X"),createPlayer("Pork","O")];
+        rounds = prompt("How Many Rounds to Play? 1-9:");
+        
+        for (let round = 0; round < rounds; round++) {
+            gameOver = false;
+            currentPlayerIndex = 0;
+            board.reset();
+            
+            while(!gameOver) {
+                const cell = prompt(`choose cell 1-9:\n${board.TheBoardInterface()}`);
+    
+                //drop value
+                if (!board.setMark(cell,player[currentPlayerIndex].mark)) {
+                    continue;
+                }
+                
+                //check result
+                if (board.checkWin()) {
+                    //Won
+                    console.log(`${player[currentPlayerIndex].name} Won the Game!`);
+                    gameOver = true;
+                } else if (board.checkDraw()) {
+                    //Draw
+                    console.log(`the Game ended With Draw!`);
+                    gameOver = true;
+                } else {
+                    //Ongoing
+                    currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
+                }
+    
+            }
+        }
     }
 
     return {board , play};
