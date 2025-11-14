@@ -66,7 +66,8 @@ const gameBoard = (() => {
     }
 
     function setMark(index,value) {
-        return board[index - 1].setValue(value);
+        console.log(index,value);
+        return board[index].setValue(value);
     }
 
     function checkWin() {
@@ -150,40 +151,44 @@ const gameController = (() => {
     let player = [];
     let currentPlayerIndex;
 
-    function startGame(player1Name,player2Name) {
-        player = [createPlayer(player1Name,"X"),createPlayer(player2Name,"O")];
-        
+    function startGame() {        
         gameOver = false;
         currentPlayerIndex = 0;
-        gameBoard.reset();
-        
-
-        //drop value
-        if (!gameBoard.setMark(cell,player[currentPlayerIndex].mark)) {
-
-        }
-        
-        //check result
-        if (gameBoard.checkWin()) {
-            //Won
-            console.log(`${player[currentPlayerIndex].name} Won the Game!`);
-            gameOver = true;
-        } else if (gameBoard.checkDraw()) {
-            //Draw
-            console.log(`the Game ended With Draw!`);
-            gameOver = true;
-        } else {
-            //Ongoing
-            currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
-        }
-
+        gameBoard.reset();   
     }
 
     function setPlayers(player1Name,player2Name) {
         player = [createPlayer(player1Name,"X"),createPlayer(player2Name,"O")];
     }
 
-    return {startGame,currentPlayerIndex,player};
+    function playChoice(cellIndex) {
+        //drop value
+        if (!gameBoard.setMark(cellIndex,player[currentPlayerIndex].mark)) {
+            //Warning Message
+            alert(`Wrong Choice!`);
+        }
+
+        displayController.updateGameBoard();
+        checkResult();
+    }
+
+    function checkResult() {
+        //check result
+        if (gameBoard.checkWin()) {
+            //Won
+            alert(`${player[currentPlayerIndex].name} Won the Game!`);
+            gameOver = true;
+        } else if (gameBoard.checkDraw()) {
+            //Draw
+            alert(`the Game ended With Draw!`);
+            gameOver = true;
+        } else {
+            //Ongoing
+            currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
+        }
+    }
+
+    return {startGame,setPlayers,playChoice};
 })();
 
 const displayController = (() => {
@@ -199,13 +204,21 @@ const displayController = (() => {
             const cellButton = document.createElement("button");
             cell.classList.add(`cell`);
             cellButton.classList.add(`button-${i+1}`);
+            cellButton.setAttribute("cellIndex",i);
 
             cell.appendChild(cellButton);
             
             gameBoardContainer.appendChild(cell);
         }
 
+        gameBoardContainer.addEventListener("click",(e) => {
+            const cell = e.target;
+            const cellIndex = cell.getAttribute("cellIndex");
+            gameController.playChoice(cellIndex);
+        })
+
         mainContainer.appendChild(gameBoardContainer);
+        updateGameBoard();
     }
 
     function displayGameBar() {
@@ -231,7 +244,13 @@ const displayController = (() => {
         mainContainer.appendChild(gameBarContainer);
 
         startButton.addEventListener("click",() => {
-            gameController.startGame(playerNameTextBox1.innerText,playerNameTextBox2.innerText);
+            //hide the gameBar 
+            gameController.setPlayers(playerNameTextBox1.innerText,playerNameTextBox2.innerText);
+            mainContainer.innerHTML = "";
+
+            displayController.displayGameBoard();
+            
+            gameController.startGame();
         })
     }
 
@@ -239,10 +258,22 @@ const displayController = (() => {
         // gameController.currentPlayerIndex
     }
 
+    function updateGameBoard() {
+        const cellButtons = document.querySelectorAll(".cell > button");
+        const currentBoard = gameBoard.getBoard();
+        
+        cellButtons.forEach((button,i) => {
+            if(currentBoard[i].getValue() !== "") {
+                button.innerText = currentBoard[i].getValue();
+            }
+        });
+    }
+
     return {
         displayGameBoard,
         displayGameBar,
         displayTurn,
+        updateGameBoard,
     }
 })();
 
