@@ -150,56 +150,103 @@ const gameController = (() => {
     let player = [];
     let currentPlayerIndex;
 
-    function play() {
-        player = [createPlayer("John","X"),createPlayer("Pork","O")];
-        rounds = prompt("How Many Rounds to Play? 1-9:");
+    function startGame(player1Name,player2Name) {
+        player = [createPlayer(player1Name,"X"),createPlayer(player2Name,"O")];
         
         gameOver = false;
         currentPlayerIndex = 0;
         gameBoard.reset();
         
-        while(!gameOver) {
-            const cell = prompt(`choose cell 1-9:\n${gameBoard.TheBoardInterface()}`);
 
-            //drop value
-            if (!gameBoard.setMark(cell,player[currentPlayerIndex].mark)) {
-                continue;
-            }
-            
-            //check result
-            if (gameBoard.checkWin()) {
-                //Won
-                console.log(`${player[currentPlayerIndex].name} Won the Game!`);
-                gameOver = true;
-            } else if (gameBoard.checkDraw()) {
-                //Draw
-                console.log(`the Game ended With Draw!`);
-                gameOver = true;
-            } else {
-                //Ongoing
-                currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
-            }
+        //drop value
+        if (!gameBoard.setMark(cell,player[currentPlayerIndex].mark)) {
 
         }
+        
+        //check result
+        if (gameBoard.checkWin()) {
+            //Won
+            console.log(`${player[currentPlayerIndex].name} Won the Game!`);
+            gameOver = true;
+        } else if (gameBoard.checkDraw()) {
+            //Draw
+            console.log(`the Game ended With Draw!`);
+            gameOver = true;
+        } else {
+            //Ongoing
+            currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
+        }
+
     }
 
-    return {play};
+    function setPlayers(player1Name,player2Name) {
+        player = [createPlayer(player1Name,"X"),createPlayer(player2Name,"O")];
+    }
+
+    return {startGame,currentPlayerIndex,player};
 })();
 
 const displayController = (() => {
     // TODO: display Controller
     function displayGameBoard() {
-        const gameBoardContainer = document.getElementById("game-board");
-        gameBoardContainer.innerText = gameBoard.TheBoardInterface();
+        const mainContainer = document.getElementById("main-container");
+        const gameBoardContainer = document.createElement("div");
+        gameBoardContainer.classList.add("game-board");
+        
+        //create board grid
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement("div");
+            const cellButton = document.createElement("button");
+            cell.classList.add(`cell`);
+            cellButton.classList.add(`button-${i+1}`);
+
+            cell.appendChild(cellButton);
+            
+            gameBoardContainer.appendChild(cell);
+        }
+
+        mainContainer.appendChild(gameBoardContainer);
+    }
+
+    function displayGameBar() {
+        const mainContainer = document.getElementById("main-container");
+        const gameBarContainer = document.createElement("div");
+        gameBarContainer.classList.add("game-bar");
+
+        const playerNameTextBox1 = document.createElement("input");
+        const playerNameTextBox2 = document.createElement("input");
+        playerNameTextBox1.setAttribute("placeholder","player 1's Name");
+        playerNameTextBox2.setAttribute("placeholder","player 2's Name");
+        playerNameTextBox1.setAttribute("id","player1-name");
+        playerNameTextBox2.setAttribute("id","player2-name");
+
+        const startButton = document.createElement("button");
+        startButton.setAttribute("id","start-button")
+        startButton.innerText = "Start";
+
+        gameBarContainer.appendChild(playerNameTextBox1);
+        gameBarContainer.appendChild(playerNameTextBox2);
+        gameBarContainer.appendChild(startButton);
+
+        mainContainer.appendChild(gameBarContainer);
+
+        startButton.addEventListener("click",() => {
+            gameController.startGame(playerNameTextBox1.innerText,playerNameTextBox2.innerText);
+        })
+    }
+
+    function displayTurn() {
+        // gameController.currentPlayerIndex
     }
 
     return {
         displayGameBoard,
+        displayGameBar,
+        displayTurn,
     }
 })();
 
 
 
 
-// gameController.play();
-displayController.displayGameBoard();
+displayController.displayGameBar();
