@@ -66,7 +66,6 @@ const gameBoard = (() => {
     }
 
     function setMark(index,value) {
-        console.log(index,value);
         return board[index].setValue(value);
     }
 
@@ -154,7 +153,8 @@ const gameController = (() => {
     function startGame() {        
         gameOver = false;
         currentPlayerIndex = 0;
-        gameBoard.reset();   
+        gameBoard.reset(); 
+        displayController.updateTurnMessage(player[currentPlayerIndex].name,player[currentPlayerIndex].mark)  
     }
 
     function setPlayers(player1Name,player2Name) {
@@ -165,7 +165,12 @@ const gameController = (() => {
         //drop value
         if (!gameBoard.setMark(cellIndex,player[currentPlayerIndex].mark)) {
             //Warning Message
-            alert(`Wrong Choice!`);
+            if (!gameOver) {
+                alert(`This Cell Already Fileld!`);
+            } else {
+                alert(`This Game is Over!`);
+                return;
+            }
         }
 
         displayController.updateGameBoard();
@@ -192,7 +197,6 @@ const gameController = (() => {
 })();
 
 const displayController = (() => {
-    // TODO: display Controller
     function displayGameBoard() {
         const mainContainer = document.getElementById("main-container");
         const gameBoardContainer = document.createElement("div");
@@ -213,7 +217,7 @@ const displayController = (() => {
 
         gameBoardContainer.addEventListener("click",(e) => {
             const cell = e.target;
-            const cellIndex = cell.getAttribute("cellIndex");
+            const cellIndex = parseInt(cell.getAttribute("cellIndex"));
             gameController.playChoice(cellIndex);
         })
 
@@ -245,9 +249,10 @@ const displayController = (() => {
 
         startButton.addEventListener("click",() => {
             //hide the gameBar 
-            gameController.setPlayers(playerNameTextBox1.innerText,playerNameTextBox2.innerText);
+            gameController.setPlayers(playerNameTextBox1.value,playerNameTextBox2.value);
             mainContainer.innerHTML = "";
 
+            displayController.displayTurn();
             displayController.displayGameBoard();
             
             gameController.startGame();
@@ -255,7 +260,18 @@ const displayController = (() => {
     }
 
     function displayTurn() {
-        // gameController.currentPlayerIndex
+        const mainContainer = document.getElementById("main-container");
+        const playerTurnMessageContainer = document.createElement("div");
+        const playerTurnMessageParagraph = document.createElement("p");
+        playerTurnMessageContainer.classList.add("message-container");
+        playerTurnMessageParagraph.classList.add("message-paragraph");
+        playerTurnMessageContainer.appendChild(playerTurnMessageParagraph);
+        mainContainer.appendChild(playerTurnMessageContainer);
+    }
+
+    function updateTurnMessage(PlayerName,Mark) {
+        const playerTurnMessageParagraph = document.getElementsByClassName("message-paragraph")[0];
+        playerTurnMessageParagraph.innerHTML = `${PlayerName}'s Turn:(${Mark})`;
     }
 
     function updateGameBoard() {
@@ -265,14 +281,28 @@ const displayController = (() => {
         cellButtons.forEach((button,i) => {
             if(currentBoard[i].getValue() !== "") {
                 button.innerText = currentBoard[i].getValue();
+                if (button.innerText === "O") {
+                    button.classList.add("o-choice");
+                }
             }
         });
+    }
+
+    function displayRestartButton() {
+        const mainContainer = document.getElementById("main-container");
+        const restartButton = document.createElement("button");
+        restartButton.classList.add("restart-button");
+        
+        restartButton.addEventListener("click",() => {
+            
+        })
     }
 
     return {
         displayGameBoard,
         displayGameBar,
         displayTurn,
+        updateTurnMessage,
         updateGameBoard,
     }
 })();
