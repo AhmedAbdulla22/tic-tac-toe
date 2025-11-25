@@ -162,19 +162,17 @@ const gameController = (() => {
     }
 
     function playChoice(cellIndex) {
-        //drop value
-        if (!gameBoard.setMark(cellIndex,player[currentPlayerIndex].mark)) {
-            //Warning Message
-            if (!gameOver) {
-                alert(`This Cell Already Fileld!`);
-            } else {
+        if (gameOver) {
                 alert(`This Game is Over!`);
                 return;
-            }
+        } else if (!gameBoard.setMark(cellIndex,player[currentPlayerIndex].mark)) {
+            //Warning Message
+            alert(`This Cell Already Fileld!`);
         }
 
         displayController.updateGameBoard();
         checkResult();
+        displayController.updateTurnMessage(player[currentPlayerIndex].name,player[currentPlayerIndex].mark);
     }
 
     function checkResult() {
@@ -189,8 +187,12 @@ const gameController = (() => {
             gameOver = true;
         } else {
             //Ongoing
-            currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
+            changePlayerTurn();
         }
+    }
+
+    function changePlayerTurn() {
+        currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
     }
 
     return {startGame,setPlayers,playChoice};
