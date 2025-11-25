@@ -172,7 +172,13 @@ const gameController = (() => {
 
         displayController.updateGameBoard();
         checkResult();
-        displayController.updateTurnMessage(player[currentPlayerIndex].name, player[currentPlayerIndex].mark);
+
+        if (gameOver) {
+            displayController.displayRestartButton();
+            displayController.updateWinnerMessage(player[currentPlayerIndex].name);
+        } else {
+            displayController.updateTurnMessage(player[currentPlayerIndex].name, player[currentPlayerIndex].mark);
+        }
     }
 
     function checkResult() {
@@ -188,10 +194,6 @@ const gameController = (() => {
         } else {
             //Ongoing
             changePlayerTurn();
-        }
-
-        if (gameOver) {
-            displayController.displayRestartButton();
         }
     }
 
@@ -279,6 +281,11 @@ const displayController = (() => {
         const playerTurnMessageParagraph = document.getElementsByClassName("message-paragraph")[0];
         playerTurnMessageParagraph.innerHTML = `${PlayerName}'s Turn:(${Mark})`;
     }
+    
+    function updateWinnerMessage(PlayerName) {
+        const winnerMessageParagraph = document.getElementsByClassName("message-paragraph")[0];
+        winnerMessageParagraph.innerHTML = `${PlayerName} Won The Game!`;
+    }
 
     function updateGameBoard() {
         const cellButtons = document.querySelectorAll(".cell > button");
@@ -308,17 +315,20 @@ const displayController = (() => {
         })
 
         messageContainer.appendChild(restartButton);
+
     }
 
     function clearMainContainer() {
         const mainContainer = document.getElementById("main-container");
-        mainContainer.innerHTML = "";    }
+        mainContainer.innerHTML = "";
+    }
 
     return {
         displayGameBoard,
         displayGameBar,
         displayTurn,
         updateTurnMessage,
+        updateWinnerMessage,
         updateGameBoard,
         displayRestartButton,
         clearMainContainer,
