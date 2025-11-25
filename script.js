@@ -8,7 +8,7 @@ function Cell() {
     }
 
     function setValue(newValue) {
-        if(isEmpty()) {
+        if (isEmpty()) {
             value = newValue;
             return true;
         } else {
@@ -26,7 +26,7 @@ function Cell() {
     }
 }
 
-function createPlayer(name,mark) {
+function createPlayer(name, mark) {
     return {
         name,
         mark
@@ -41,11 +41,11 @@ const gameBoard = (() => {
         let Board = [];
         for (let i = 0; i < 9; i++) {
             Board[i] = Cell();
-        } 
+        }
         return Board;
     }
-    
-    
+
+
     function getBoard() {
         return board;
     }
@@ -57,7 +57,7 @@ const gameBoard = (() => {
     function TheBoardInterface() {
         let boardUI = "";
         for (let i = 0; i < 9; i++) {
-            boardUI += ` | ${board[i].getValue() ? board[i].getValue() : '#'}`;    
+            boardUI += ` | ${board[i].getValue() ? board[i].getValue() : '#'}`;
             if (i === 2 || i === 5 || i === 8) {
                 boardUI += " |\n-----------\n";
             }
@@ -65,69 +65,69 @@ const gameBoard = (() => {
         return boardUI;
     }
 
-    function setMark(index,value) {
+    function setMark(index, value) {
         return board[index].setValue(value);
     }
 
     function checkWin() {
         let isWin = false;
         //Horizontal 
-            for (let row = 0; row < 3; row++) {
-                let index = row * 3; // to go by row each time 0 row 1 , 3 row 2 and 6 is row 3
-                let skip = false; // to skip row if there is empty cell
+        for (let row = 0; row < 3; row++) {
+            let index = row * 3; // to go by row each time 0 row 1 , 3 row 2 and 6 is row 3
+            let skip = false; // to skip row if there is empty cell
 
-                for (let i = 0; i < 3; i++) {
-                    if (board[index + i].getValue() === "") {
+            for (let i = 0; i < 3; i++) {
+                if (board[index + i].getValue() === "") {
+                    skip = true;
+                    break;
+                }
+            }
+
+            if (skip) {
+                continue;
+            }
+
+            //check for win
+            if (board[index].getValue() === board[index + 1].getValue() && board[index].getValue() === board[index + 2].getValue()) {
+                isWin = true;
+                break;
+            }
+        }
+
+        if (!isWin) {
+            //Vertical 
+            for (let col = 0; col < 3; col++) {
+                let skip = false; // to skip col if there is empty cell
+
+                for (let row = 0; row < 3; row++) {
+                    if (board[col + row * 3].getValue() === "") {
                         skip = true;
                         break;
-                    }                 
+                    }
                 }
 
-                if(skip) {
-                continue; 
-                } 
+                if (skip) {
+                    continue;
+                }
 
-                //check for win
-                if (board[index].getValue() === board[index + 1].getValue() && board[index].getValue() === board[index + 2].getValue()) {
+                if (board[col].getValue() === board[col + 3].getValue() && board[col].getValue() === board[col + 6].getValue()) {
                     isWin = true;
                     break;
                 }
             }
-            
-            if (!isWin) {
-                //Vertical 
-                for (let col = 0; col < 3; col++) {
-                    let skip  = false; // to skip col if there is empty cell
-    
-                    for (let row = 0; row < 3; row++) {
-                        if (board[col + row * 3].getValue() === "") {
-                            skip = true;
-                            break;
-                        }                             
-                    }
-    
-                    if(skip) {
-                    continue; 
-                    } 
-    
-                    if (board[col].getValue() === board[col + 3].getValue() && board[col].getValue() === board[col + 6].getValue()) {
-                        isWin = true;
-                        break;
-                    }
-                }
-            }
-            
+        }
 
-            if (!isWin) {
-                //Diag 
-                if (board[0].getValue() !== "" && board[0].getValue() === board[4].getValue() && board[0].getValue() === board[8].getValue()) {
-                    isWin = true;
-                } else if (board[2].getValue() !== "" && board[2].getValue() === board[4].getValue() && board[2].getValue() === board[6].getValue()) {
-                    isWin = true;
-                }
-            }
 
-            return isWin;
+        if (!isWin) {
+            //Diag 
+            if (board[0].getValue() !== "" && board[0].getValue() === board[4].getValue() && board[0].getValue() === board[8].getValue()) {
+                isWin = true;
+            } else if (board[2].getValue() !== "" && board[2].getValue() === board[4].getValue() && board[2].getValue() === board[6].getValue()) {
+                isWin = true;
+            }
+        }
+
+        return isWin;
     }
 
     function checkDraw() {
@@ -137,12 +137,12 @@ const gameBoard = (() => {
                 draw = false;
                 break;
             }
-        } 
+        }
 
         return draw;
     }
 
-    return { getBoard , reset , setMark,TheBoardInterface , checkDraw , checkWin};
+    return { getBoard, reset, setMark, TheBoardInterface, checkDraw, checkWin };
 })();
 
 const gameController = (() => {
@@ -150,29 +150,29 @@ const gameController = (() => {
     let player = [];
     let currentPlayerIndex;
 
-    function startGame() {        
+    function startGame() {
         gameOver = false;
         currentPlayerIndex = 0;
-        gameBoard.reset(); 
-        displayController.updateTurnMessage(player[currentPlayerIndex].name,player[currentPlayerIndex].mark)  
+        gameBoard.reset();
+        displayController.updateTurnMessage(player[currentPlayerIndex].name, player[currentPlayerIndex].mark)
     }
 
-    function setPlayers(player1Name,player2Name) {
-        player = [createPlayer(player1Name,"X"),createPlayer(player2Name,"O")];
+    function setPlayers(player1Name, player2Name) {
+        player = [createPlayer(player1Name, "X"), createPlayer(player2Name, "O")];
     }
 
     function playChoice(cellIndex) {
         if (gameOver) {
-                alert(`This Game is Over!`);
-                return;
-        } else if (!gameBoard.setMark(cellIndex,player[currentPlayerIndex].mark)) {
+            alert(`This Game is Over!`);
+            return;
+        } else if (!gameBoard.setMark(cellIndex, player[currentPlayerIndex].mark)) {
             //Warning Message
             alert(`This Cell Already Fileld!`);
         }
 
         displayController.updateGameBoard();
         checkResult();
-        displayController.updateTurnMessage(player[currentPlayerIndex].name,player[currentPlayerIndex].mark);
+        displayController.updateTurnMessage(player[currentPlayerIndex].name, player[currentPlayerIndex].mark);
     }
 
     function checkResult() {
@@ -189,13 +189,17 @@ const gameController = (() => {
             //Ongoing
             changePlayerTurn();
         }
+
+        if (gameOver) {
+            displayController.displayRestartButton();
+        }
     }
 
     function changePlayerTurn() {
-        currentPlayerIndex = currentPlayerIndex === 0 ? 1:0;
+        currentPlayerIndex = currentPlayerIndex === 0 ? 1 : 0;
     }
 
-    return {startGame,setPlayers,playChoice};
+    return { startGame, setPlayers, playChoice };
 })();
 
 const displayController = (() => {
@@ -203,21 +207,21 @@ const displayController = (() => {
         const mainContainer = document.getElementById("main-container");
         const gameBoardContainer = document.createElement("div");
         gameBoardContainer.classList.add("game-board");
-        
+
         //create board grid
         for (let i = 0; i < 9; i++) {
             const cell = document.createElement("div");
             const cellButton = document.createElement("button");
             cell.classList.add(`cell`);
-            cellButton.classList.add(`button-${i+1}`);
-            cellButton.setAttribute("cellIndex",i);
+            cellButton.classList.add(`button-${i + 1}`);
+            cellButton.setAttribute("cellIndex", i);
 
             cell.appendChild(cellButton);
-            
+
             gameBoardContainer.appendChild(cell);
         }
 
-        gameBoardContainer.addEventListener("click",(e) => {
+        gameBoardContainer.addEventListener("click", (e) => {
             const cell = e.target;
             const cellIndex = parseInt(cell.getAttribute("cellIndex"));
             gameController.playChoice(cellIndex);
@@ -234,13 +238,13 @@ const displayController = (() => {
 
         const playerNameTextBox1 = document.createElement("input");
         const playerNameTextBox2 = document.createElement("input");
-        playerNameTextBox1.setAttribute("placeholder","player 1's Name");
-        playerNameTextBox2.setAttribute("placeholder","player 2's Name");
-        playerNameTextBox1.setAttribute("id","player1-name");
-        playerNameTextBox2.setAttribute("id","player2-name");
+        playerNameTextBox1.setAttribute("placeholder", "player 1's Name");
+        playerNameTextBox2.setAttribute("placeholder", "player 2's Name");
+        playerNameTextBox1.setAttribute("id", "player1-name");
+        playerNameTextBox2.setAttribute("id", "player2-name");
 
         const startButton = document.createElement("button");
-        startButton.setAttribute("id","start-button")
+        startButton.setAttribute("id", "start-button")
         startButton.innerText = "Start";
 
         gameBarContainer.appendChild(playerNameTextBox1);
@@ -249,14 +253,14 @@ const displayController = (() => {
 
         mainContainer.appendChild(gameBarContainer);
 
-        startButton.addEventListener("click",() => {
+        startButton.addEventListener("click", () => {
             //hide the gameBar 
-            gameController.setPlayers(playerNameTextBox1.value,playerNameTextBox2.value);
+            gameController.setPlayers(playerNameTextBox1.value, playerNameTextBox2.value);
             mainContainer.innerHTML = "";
 
             displayController.displayTurn();
             displayController.displayGameBoard();
-            
+
             gameController.startGame();
         })
     }
@@ -271,7 +275,7 @@ const displayController = (() => {
         mainContainer.appendChild(playerTurnMessageContainer);
     }
 
-    function updateTurnMessage(PlayerName,Mark) {
+    function updateTurnMessage(PlayerName, Mark) {
         const playerTurnMessageParagraph = document.getElementsByClassName("message-paragraph")[0];
         playerTurnMessageParagraph.innerHTML = `${PlayerName}'s Turn:(${Mark})`;
     }
@@ -279,9 +283,9 @@ const displayController = (() => {
     function updateGameBoard() {
         const cellButtons = document.querySelectorAll(".cell > button");
         const currentBoard = gameBoard.getBoard();
-        
-        cellButtons.forEach((button,i) => {
-            if(currentBoard[i].getValue() !== "") {
+
+        cellButtons.forEach((button, i) => {
+            if (currentBoard[i].getValue() !== "") {
                 button.innerText = currentBoard[i].getValue();
                 if (button.innerText === "O") {
                     button.classList.add("o-choice");
@@ -291,14 +295,24 @@ const displayController = (() => {
     }
 
     function displayRestartButton() {
-        const mainContainer = document.getElementById("main-container");
+        const messageContainer = document.querySelector(".message-container");
         const restartButton = document.createElement("button");
         restartButton.classList.add("restart-button");
-        
-        restartButton.addEventListener("click",() => {
-            
+        restartButton.innerText = "Restart";
+
+        restartButton.addEventListener("click", () => {
+            displayController.clearMainContainer();
+            displayController.displayTurn();
+            gameController.startGame();
+            displayController.displayGameBoard();
         })
+
+        messageContainer.appendChild(restartButton);
     }
+
+    function clearMainContainer() {
+        const mainContainer = document.getElementById("main-container");
+        mainContainer.innerHTML = "";    }
 
     return {
         displayGameBoard,
@@ -306,6 +320,8 @@ const displayController = (() => {
         displayTurn,
         updateTurnMessage,
         updateGameBoard,
+        displayRestartButton,
+        clearMainContainer,
     }
 })();
 
